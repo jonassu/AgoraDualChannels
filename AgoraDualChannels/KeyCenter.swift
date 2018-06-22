@@ -7,5 +7,5 @@
 //
 
 struct KeyCenter {
-    static let AppId: String = "0279f083791444fc835764dfedd614ce"
+    static let AppId: String = "aab8b8f5a8cd4469a63042fcfafe7063"
 }

@@ -243,6 +243,7 @@ private extension LiveRoomViewController {
     }
 }
 
+
 // MARK: -Agora Engine Delegate
 extension LiveRoomViewController: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
@@ -251,8 +252,8 @@ extension LiveRoomViewController: AgoraRtcEngineDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         logList.append(LogMessage(type: .info, channel: .main, message: "did join channel of uid: \(uid)"))
-//        let remoteSession = videoSession(ofUid: uid, forChannel: .main)
-//        rtcEngine.setupRemoteVideo(remoteSession.canvas)
+        let remoteSession = videoSession(ofUid: uid, forChannel: .main)
+        rtcEngine.setupRemoteVideo(remoteSession.canvas)
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraRtcWarningCode) {
@@ -351,16 +352,3 @@ extension LiveRoomViewController: UITableViewDataSource {
         return cell
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
