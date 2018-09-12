@@ -223,6 +223,7 @@ private extension LiveRoomViewController {
         rtcEngine = AgoraRtcEngineKit.sharedEngine(withAppId: KeyCenter.AppId, delegate: self)
         rtcEngine.setChannelProfile(.channelProfile_LiveBroadcasting)
         rtcEngine.enableDualStreamMode(true)
+        rtcEngine.enableWebSdkInteroperability(true)
         rtcEngine.enableVideo()
         rtcEngine.setVideoProfile(videoProfile, swapWidthAndHeight: true)
         rtcEngine.setClientRole(clientRole, withKey: nil)
@@ -336,7 +337,8 @@ extension LiveRoomViewController: PopViewDelegate {
             return
         }
         self.subRoomName = subRoomName
-        rtcEngine.joinSubChannel(byKey: nil, channelName: subRoomName, info: nil, uid: 0, delegate: self.subController)
+        rtcEngine.joinSubChannel(byKey: nil, channelName: subRoomName, info: nil, uid: 0, joinSuccess: nil)
+        rtcEngine.subDelegate = self.subController
         popView.removeFromSuperview()
     }
 }
