@@ -33,6 +33,7 @@
 		0F97089B20D3B13900D0B476 /* PopView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0F97089920D3B13900D0B476 /* PopView.xib */; };
 		0F97089C20D3B13900D0B476 /* PopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F97089A20D3B13900D0B476 /* PopView.swift */; };
 		0FDB80B920DB5904005D9C58 /* SubChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDB80B820DB5904005D9C58 /* SubChannelController.swift */; };
+		70783A7621A7D06100E13A79 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70783A7521A7D06100E13A79 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		0F97089920D3B13900D0B476 /* PopView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PopView.xib; sourceTree = "<group>"; };
 		0F97089A20D3B13900D0B476 /* PopView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopView.swift; sourceTree = "<group>"; };
 		0FDB80B820DB5904005D9C58 /* SubChannelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubChannelController.swift; sourceTree = "<group>"; };
+		70783A7521A7D06100E13A79 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70783A7621A7D06100E13A79 /* Accelerate.framework in Frameworks */,
 				0F7EAAEA20D3644900283021 /* AgoraRtcEngineKit.framework in Frameworks */,
 				0F7EAAE820D3644200283021 /* AVFoundation.framework in Frameworks */,
 				0F7EAAE620D3643900283021 /* AudioToolbox.framework in Frameworks */,
@@ -124,6 +127,7 @@
 		0F7EAAD620D3640400283021 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				70783A7521A7D06100E13A79 /* Accelerate.framework */,
 				0F7EAAE920D3644900283021 /* AgoraRtcEngineKit.framework */,
 				0F7EAAE720D3644200283021 /* AVFoundation.framework */,
 				0F7EAAE520D3643900283021 /* AudioToolbox.framework */,

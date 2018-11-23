@@ -242,9 +242,11 @@ private extension LiveRoomViewController {
         rtcEngine.enableDualStreamMode(true)
         rtcEngine.enableWebSdkInteroperability(true)
         rtcEngine.enableVideo()
-        rtcEngine.setVideoProfile(videoProfile, swapWidthAndHeight: true)
         rtcEngine.setClientRole(clientRole)
         
+        let videoConfig = AgoraVideoEncoderConfiguration(size: AgoraVideoDimension640x360, frameRate: .fps15, bitrate: AgoraVideoBitrateStandard, orientationMode: .adaptative)
+        rtcEngine.setVideoEncoderConfiguration(videoConfig)
+
         if isBroadcaster {
             rtcEngine.startPreview()
         }
