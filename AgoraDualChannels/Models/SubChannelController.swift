@@ -12,10 +12,10 @@ import AgoraRtcEngineKit
 @objc protocol SubRtcEngineDelegate: NSObjectProtocol {
     @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int)
     @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int)
-    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraRtcStats)
-    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraRtcUserOfflineReason)
-    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraRtcWarningCode)
-    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraRtcErrorCode)
+    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats)
+    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason)
+    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode)
+    @objc optional func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode)
 }
 
 class SubRtcEngineController: NSObject {
@@ -41,19 +41,19 @@ extension SubRtcEngineController: AgoraRtcEngineDelegate {
         delegate?.subRtcEngine?(engine, didJoinedOfUid: uid, elapsed: elapsed)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraRtcUserOfflineReason) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         delegate?.subRtcEngine?(engine, didOfflineOfUid: uid, reason: reason)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraRtcStats) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
         delegate?.subRtcEngine?(engine, didLeaveChannelWith: stats)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraRtcWarningCode) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
         delegate?.subRtcEngine?(engine, didOccurWarning: warningCode)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraRtcErrorCode) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
         delegate?.subRtcEngine?(engine, didOccurError: errorCode)
     }
 }

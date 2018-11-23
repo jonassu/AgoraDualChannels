@@ -19,18 +19,17 @@ class LiveRoomViewController: UIViewController {
     @IBOutlet weak var logTableView: UITableView!
     
     var roomName: String!
-    var clientRole: AgoraRtcClientRole!
-    var videoProfile: AgoraRtcVideoProfile!
+    var clientRole: AgoraClientRole!
     
     var subRoomName: String?
-    var subClientRole: AgoraRtcClientRole?
+    var subClientRole: AgoraClientRole?
     
     var scrollContainView = UIScrollView()
 
     //MARK: - engine & session view
     var rtcEngine: AgoraRtcEngineKit!
     fileprivate var isBroadcaster: Bool {
-        return clientRole == .clientRole_Broadcaster
+        return clientRole == .broadcaster
     }
     
     fileprivate var isMuted = false {
@@ -106,6 +105,24 @@ class LiveRoomViewController: UIViewController {
     }
     
     @IBAction func doBroadcastPressed(_ sender: UIButton) {
+        let alert = UIAlertController(title: nil, message: "Set publish channel", preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.placeholder = "Publish channel name"
+        }
+
+        let ok = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            guard let channel = alert.textFields?.first?.text, !channel.isEmpty else {
+                return
+            }
+            self?.rtcEngine.publish(onChannel: channel)
+        }
+        alert.addAction(ok)
+
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancel)
+
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func doAddRoomPressed(_ sender: UIButton) {
@@ -221,12 +238,12 @@ private extension LiveRoomViewController {
 private extension LiveRoomViewController {
     func loadAgoraKit() {
         rtcEngine = AgoraRtcEngineKit.sharedEngine(withAppId: KeyCenter.AppId, delegate: self)
-        rtcEngine.setChannelProfile(.channelProfile_LiveBroadcasting)
+        rtcEngine.setChannelProfile(.liveBroadcasting)
         rtcEngine.enableDualStreamMode(true)
         rtcEngine.enableWebSdkInteroperability(true)
         rtcEngine.enableVideo()
         rtcEngine.setVideoProfile(videoProfile, swapWidthAndHeight: true)
-        rtcEngine.setClientRole(clientRole, withKey: nil)
+        rtcEngine.setClientRole(clientRole)
         
         if isBroadcaster {
             rtcEngine.startPreview()
@@ -234,7 +251,7 @@ private extension LiveRoomViewController {
         
         addLocalSession()
         
-        let code = rtcEngine.joinChannel(byKey: nil, channelName: roomName, info: nil, uid: 0, joinSuccess: nil)
+        let code = rtcEngine.joinChannel(byToken: nil, channelId: roomName, info: nil, uid: 0, joinSuccess: nil)
         if code == 0 {
             setIdleTimerActive(false)
             rtcEngine.setEnableSpeakerphone(true)
@@ -257,15 +274,15 @@ extension LiveRoomViewController: AgoraRtcEngineDelegate {
         rtcEngine.setupRemoteVideo(remoteSession.canvas)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraRtcWarningCode) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
 //        logList.append(LogMessage(type: .warning, channel: .main, message: "did occour warning: \(warningCode.rawValue)"))
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraRtcErrorCode) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
         logList.append(LogMessage(type: .error, channel: .main, message: "did occour error: \(errorCode.rawValue)"))
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraRtcUserOfflineReason) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         logList.append(LogMessage(type: .info, channel: .main, message: "did offline of uid: \(uid)"))
         
         var indexToDelete: Int?
@@ -281,7 +298,7 @@ extension LiveRoomViewController: AgoraRtcEngineDelegate {
         }
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraRtcStats) {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
         logList.append(LogMessage(type: .info, channel: .main, message: "did leave channel"))
     }
 }
@@ -301,7 +318,7 @@ extension LiveRoomViewController: SubRtcEngineDelegate {
         rtcEngine.setupRemoteVideo(remoteSession.canvas)
     }
     
-    func subRtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraRtcUserOfflineReason) {
+    func subRtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         logList.append(LogMessage(type: .info, channel: .sub, message: "did offline of uid: \(uid)"))
         var indexToDelete: Int?
         for (index, session) in videoSubSessions.enumerated() {
@@ -316,14 +333,14 @@ extension LiveRoomViewController: SubRtcEngineDelegate {
         }
     }
     
-    func subRtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraRtcStats) {
+    func subRtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
         logList.append(LogMessage(type: .info, channel: .sub, message: "did leave subchannel"))
         if isInSubChannel {
             isInSubChannel = false
         }
     }
     
-    func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraRtcErrorCode) {
+    func subRtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
         logList.append(LogMessage(type: .error, channel: .sub, message: "did occour error: \(errorCode.rawValue)"))
     }
 }
@@ -337,7 +354,7 @@ extension LiveRoomViewController: PopViewDelegate {
             return
         }
         self.subRoomName = subRoomName
-        rtcEngine.joinSubChannel(byKey: nil, channelName: subRoomName, info: nil, uid: 0, joinSuccess: nil)
+        rtcEngine.joinSubChannel(byToken: nil, channelId: subRoomName, info: nil, uid: 0, joinSuccess: nil)
         rtcEngine.subDelegate = self.subController
         popView.removeFromSuperview()
     }

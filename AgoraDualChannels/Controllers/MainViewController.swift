@@ -14,8 +14,6 @@ class MainViewController: UIViewController {
     @IBOutlet weak var roomNameTextField: UITextField!
     @IBOutlet weak var popoverSourceView: UIView!
     
-    fileprivate var videoProfile = AgoraRtcVideoProfile._VideoProfile_360P
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let segueId = segue.identifier else {
             return
@@ -25,8 +23,7 @@ class MainViewController: UIViewController {
         case "mainToLive":
             let liveVC = segue.destination as! LiveRoomViewController
             liveVC.roomName = roomNameTextField.text!
-            liveVC.videoProfile = videoProfile
-            if let value = sender as? NSNumber, let role = AgoraRtcClientRole(rawValue: value.intValue) {
+            if let value = sender as? NSNumber, let role = AgoraClientRole(rawValue: value.intValue) {
                 liveVC.clientRole = role
             }
 //            liveVC.delegate = self
@@ -40,10 +37,10 @@ private extension MainViewController {
     func showRoleSelection() {
         let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let broadcaster = UIAlertAction(title: "Broadcaster", style: .default) { [weak self] _ in
-            self?.join(withRole: .clientRole_Broadcaster)
+            self?.join(withRole: .broadcaster)
         }
         let audience = UIAlertAction(title: "Audience", style: .default) { [weak self] _ in
-            self?.join(withRole: .clientRole_Audience)
+            self?.join(withRole: .audience)
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         sheet.addAction(broadcaster)
@@ -56,7 +53,7 @@ private extension MainViewController {
 }
 
 private extension MainViewController {
-    func join(withRole role: AgoraRtcClientRole) {
+    func join(withRole role: AgoraClientRole) {
         performSegue(withIdentifier: "mainToLive", sender: NSNumber(value: role.rawValue as Int))
     }
 }
